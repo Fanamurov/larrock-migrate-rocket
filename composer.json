@@ -1,0 +1,30 @@
+{
+    "name": "fanamurov/larrock-migrate-rocket",
+    "description": "Migrate RocketCMS to larrockCMS",
+    "type": "library",
+    "license": "CC-BY-4.0",
+    "authors": [
+        {
+            "name": "Alexandr Fanamurov",
+            "email": "fanamurov@ya.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Larrock\\ComponentMigrateRocket\\": "src"
+        }
+    },
+    "require": {
+        "fanamurov/larrock-core": "^0.3"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Larrock\\ComponentMigrateRocket\\LarrockComponentMigrateRocketServiceProvider"
+            ],
+            "aliases": {
+                "LarrockMigrateRocket": "Larrock\\ComponentMigrateRocket\\Facades\\LarrockMigrateRocket"
+            }
+        }
+    }
+}
