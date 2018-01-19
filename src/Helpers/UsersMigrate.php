@@ -42,6 +42,10 @@ class UsersMigrate
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'users');
+
+                //Добавляем медиа
+                $MediaMigrate = new MediaMigrate();
+                $MediaMigrate->attach($store, $item->id, 'users');
             }
 
             $this->importUserRole($item->id, $store->id);

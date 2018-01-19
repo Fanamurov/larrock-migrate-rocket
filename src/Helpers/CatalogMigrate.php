@@ -59,6 +59,10 @@ class CatalogMigrate
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'catalog');
+
+                //Добавляем медиа
+                $MediaMigrate = new MediaMigrate();
+                $MediaMigrate->attach($store, $item->id, 'catalog');
             }
         }
     }

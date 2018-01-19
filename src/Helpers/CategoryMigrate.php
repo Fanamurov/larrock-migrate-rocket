@@ -63,6 +63,10 @@ class CategoryMigrate
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'category');
+
+                //Добавляем медиа
+                $MediaMigrate = new MediaMigrate();
+                $MediaMigrate->attach($store, $item->id, 'category');
             }
         }
     }

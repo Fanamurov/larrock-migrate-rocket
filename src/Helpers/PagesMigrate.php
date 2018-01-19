@@ -36,6 +36,10 @@ class PagesMigrate
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'page');
+
+                //Добавляем медиа
+                $MediaMigrate = new MediaMigrate();
+                $MediaMigrate->attach($store, $item->id, 'page');
             }
         }
     }

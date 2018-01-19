@@ -68,6 +68,10 @@ class ReviewsMigrate
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'reviews');
+
+                //Добавляем медиа
+                $MediaMigrate = new MediaMigrate();
+                $MediaMigrate->attach($store, $item->id, 'opinions');
             }
         }
     }

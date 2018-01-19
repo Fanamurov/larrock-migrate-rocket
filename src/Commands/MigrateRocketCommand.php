@@ -7,6 +7,7 @@ use Larrock\ComponentMigrateRocket\Helpers\BlocksMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CategoryMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\FeedMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\MediaMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MenuMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MigrateDBLog;
 use Larrock\ComponentMigrateRocket\Helpers\PagesMigrate;
@@ -62,14 +63,14 @@ class MigrateRocketCommand extends Command
         $this->info('Start migrate process');
 
         $process_list = [
-            //new UsersMigrate(),
+            new UsersMigrate(),
             new CategoryMigrate(),
-            //new BlocksMigrate(),
+            new BlocksMigrate(),
             new CatalogMigrate(),
-            /*new FeedMigrate(),
+            new FeedMigrate(),
             new MenuMigrate(),
             new PagesMigrate(),
-            new ReviewsMigrate()*/
+            new ReviewsMigrate()
         ];
 
         foreach ($process_list as $process){
@@ -83,18 +84,5 @@ class MigrateRocketCommand extends Command
 
         $this->info('Process migrate ended');
         $this->call('cache:clear');
-
-
-        /*$sheet = (int)$this->option('sheet');
-        $adminWizard = new AdminWizard();
-        $data = \Cache::remember('ImportSheet'. $sheet, 1440, function() use ($sheet, $adminWizard){
-            return \Excel::selectSheetsByIndex($sheet)->load($adminWizard->findXLSX(), function($reader) {})->get();
-        });
-
-        $bar = $this->output->createProgressBar(count($data));
-        $adminWizard->artisanSheetImport($sheet, $bar, $data, $this->option('sleep'), $this->option('withoutimage'));
-        $bar->finish();
-        \Log::info('Sheet #'. $sheet .' successful imported.');
-        $this->info('Sheet #'. $sheet .' successful imported.');*/
     }
 }
