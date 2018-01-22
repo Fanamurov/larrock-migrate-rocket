@@ -32,14 +32,14 @@ class MediaMigrate
         $this->attachFiles($content, $id_connect, $type_connect);
     }
 
-    protected function attachImages($content, $id_connect, $type_connect)
+    public function attachImages($content, $id_connect, $type_connect)
     {
         $export_data = \DB::connection('migrate')->table('images')
             ->where('type_connect', '=', $type_connect)
             ->where('id_connect', '=', $id_connect)->get();
 
         foreach ($export_data as $media){
-            $src = base_path('/export/'. $type_connect .'/big/'. $media->title);
+            $src = base_path('export/'. $type_connect .'/big/'. $media->title);
             if(file_exists($src)){
                 $content->addMedia($src)->withCustomProperties([
                     'alt' => 'photo', 'gallery' => $media->param
@@ -51,14 +51,14 @@ class MediaMigrate
         return TRUE;
     }
 
-    protected function attachFiles($content, $id_connect, $type_connect)
+    public function attachFiles($content, $id_connect, $type_connect)
     {
         $export_data = \DB::connection('migrate')->table('files')
             ->where('type_connect', '=', $type_connect)
             ->where('id_connect', '=', $id_connect)->get();
 
         foreach ($export_data as $media){
-            $src = base_path('/export/'. $type_connect .'/big/'. $media->title);
+            $src = base_path('export/'. $type_connect .'/big/'. $media->title);
             if(file_exists($src)){
                 $content->addMedia($src)->withCustomProperties([
                     'alt' => 'file', 'gallery' => $media->param

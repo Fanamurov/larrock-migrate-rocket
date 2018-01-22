@@ -61,19 +61,33 @@ class CatalogMigrate
                 $migrateDBLog->log($item->id, $store->id, 'catalog');
 
                 //Есть группы товаров. Бывает так, что медиа навешаны на не импортируемый товар из group (импортирован первый)
-                $item_media_id = $item->id;
+                $item_media_id = null;
                 $get_group = \DB::connection('migrate')->table('catalog')->where('group', '=', $item->group)->get();
                 foreach ($get_group as $group_item){
                     if($export_data = \DB::connection('migrate')->table('images')
                         ->where('type_connect', '=', 'catalog')
-                        ->where('id_connect', '=', $group_item->id)->get()){
-                        $item_media_id = $group_item->id;
+                        ->where('id_connect', '=', $group_item->id)->first()){
+                        if(isset($export_data->id_connect)){
+                            $item_media_id = $export_data->id_connect;
+                        }
                     }
                 }
 
-                //Добавляем медиа
-                $MediaMigrate = new MediaMigrate();
-                $MediaMigrate->attach($store, $item_media_id, 'catalog');
+                if( !$item_media_id){
+                    if($export_data = \DB::connection('migrate')->table('files')
+                        ->where('type_connect', '=', 'catalog')
+                        ->where('id_connect', '=', $group_item->id)->first()){
+                        if(isset($export_data->id_connect)){
+                            $item_media_id = $export_data->id_connect;
+                        }
+                    }
+                }
+
+                if($item_media_id){
+                    //Добавляем медиа
+                    $MediaMigrate = new MediaMigrate();
+                    $MediaMigrate->attach($store, $item_media_id, 'catalog');
+                }
             }
         }
     }
