@@ -60,9 +60,20 @@ class CatalogMigrate
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'catalog');
 
+                //Есть группы товаров. Бывает так, что медиа навешаны на не импортируемый товар из group (импортирован первый)
+                $item_media_id = $item->id;
+                $get_group = \DB::connection('migrate')->table('catalog')->where('group', '=', $item->group)->get();
+                foreach ($get_group as $group_item){
+                    if($export_data = \DB::connection('migrate')->table('images')
+                        ->where('type_connect', '=', 'catalog')
+                        ->where('id_connect', '=', $group_item->id)->get()){
+                        $item_media_id = $group_item->id;
+                    }
+                }
+
                 //Добавляем медиа
                 $MediaMigrate = new MediaMigrate();
-                $MediaMigrate->attach($store, $item->id, 'catalog');
+                $MediaMigrate->attach($store, $item_media_id, 'catalog');
             }
         }
     }

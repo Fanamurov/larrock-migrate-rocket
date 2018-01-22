@@ -36,6 +36,10 @@ class MenuMigrate
                 $add_to_request['type'] = 'default';
             }
 
+            if((integer)$item->parent === 0){
+                $add_to_request['parent'] = NULL;
+            }
+
             $request = $request->merge($add_to_request);
             if($store = $this->store($request)){
                 //Ведем лог изменений id
