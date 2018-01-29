@@ -62,23 +62,39 @@ class MigrateRocketCommand extends Command
     {
         $this->info('Start migrate process');
 
-        $process_list = [
-            new UsersMigrate(),
-            new CategoryMigrate(),
-            new BlocksMigrate(),
-            new CatalogMigrate(),
-            new FeedMigrate(),
-            new MenuMigrate(),
-            new PagesMigrate(),
-            new ReviewsMigrate()
+        $packages = [
+            'UsersMigrate', 'CategoryMigrate', 'BlocksMigrate', 'CatalogMigrate', 'FeedMigrate',
+            'MenuMigrate', 'PagesMigrate', 'ReviewsMigrate', 'all'
         ];
+
+        $name = $this->choice('What to migrate?', $packages);
+
+        if($name === 'UsersMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'CategoryMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'BlocksMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'CatalogMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'FeedMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'MenuMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'PagesMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }elseif($name === 'ReviewsMigrate' || $name === 'all'){
+            $process_list[] = new UsersMigrate();
+        }
+
+        if( !isset($process_list)){
+            $this->error('Не выбран конкретный процесс');
+            return TRUE;
+        }
 
         foreach ($process_list as $process){
             $this->info('Process '. get_class($process) .' started');
-            //$bar = $this->output->createProgressBar(count($data));
             $process->import();
-            //$bar->finish();
-            //\Log::info('Sheet #'. $sheet .' successful imported.');
             $this->info('Process '. get_class($process) .' successful imported');
         }
 
