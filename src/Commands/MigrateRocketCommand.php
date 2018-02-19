@@ -72,7 +72,7 @@ class MigrateRocketCommand extends Command
         if($name === 'UsersMigrate' || $name === 'all'){
             $process_list[] = new UsersMigrate();
         }elseif($name === 'CategoryMigrate' || $name === 'all'){
-            $process_list[] = new CatalogMigrate();
+            $process_list[] = new CategoryMigrate();
         }elseif($name === 'BlocksMigrate' || $name === 'all'){
             $process_list[] = new BlocksMigrate();
         }elseif($name === 'CatalogMigrate' || $name === 'all'){
