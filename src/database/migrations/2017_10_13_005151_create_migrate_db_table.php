@@ -16,6 +16,8 @@ class CreateMigrateDbTable extends Migration {
 		{
 			$table->char('old_id');
 			$table->char('new_id');
+			$table->char('table_name');
+            $table->timestamps();
 
             $table->index(['old_id', 'new_id']);
 		});

@@ -39,6 +39,7 @@ class UsersMigrate
             ];
 
             $request = $request->merge($add_to_request);
+
             if($store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'users');
