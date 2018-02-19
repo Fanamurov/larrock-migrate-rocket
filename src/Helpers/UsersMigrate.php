@@ -4,6 +4,7 @@ namespace Larrock\ComponentMigrateRocket\Helpers;
 
 use Illuminate\Http\Request;
 use Larrock\ComponentMigrateRocket\Models\MigrateDB;
+use Larrock\ComponentUsers\Facades\LarrockUsers;
 use Larrock\ComponentUsers\Models\RoleUsers;
 use Larrock\Core\Traits\AdminMethodsStore;
 
@@ -40,16 +41,15 @@ class UsersMigrate
 
             $request = $request->merge($add_to_request);
 
-            if($store = $this->store($request)){
+            if( !LarrockUsers::getModel()->whereEmail($item->email)->first() && $store = $this->store($request)){
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'users');
 
                 //Добавляем медиа
                 $MediaMigrate = new MediaMigrate();
                 $MediaMigrate->attach($store, $item->id, 'users');
+                $this->importUserRole($item->id, $store->id);
             }
-
-            $this->importUserRole($item->id, $store->id);
         }
     }
 

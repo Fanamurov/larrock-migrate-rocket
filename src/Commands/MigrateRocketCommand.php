@@ -72,19 +72,19 @@ class MigrateRocketCommand extends Command
         if($name === 'UsersMigrate' || $name === 'all'){
             $process_list[] = new UsersMigrate();
         }elseif($name === 'CategoryMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new CatalogMigrate();
         }elseif($name === 'BlocksMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new BlocksMigrate();
         }elseif($name === 'CatalogMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new CatalogMigrate();
         }elseif($name === 'FeedMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new FeedMigrate();
         }elseif($name === 'MenuMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new MenuMigrate();
         }elseif($name === 'PagesMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new PagesMigrate();
         }elseif($name === 'ReviewsMigrate' || $name === 'all'){
-            $process_list[] = new UsersMigrate();
+            $process_list[] = new ReviewsMigrate();
         }
 
         if( !isset($process_list)){
