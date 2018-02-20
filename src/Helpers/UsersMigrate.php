@@ -29,6 +29,7 @@ class UsersMigrate
 
         $export_data = \DB::connection('migrate')->table('users')->get();
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'name' => $item->username,
                 'email' => $item->email,

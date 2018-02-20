@@ -38,6 +38,7 @@ class CategoryMigrate
         $migrateDBLog = new MigrateDBLog();
 
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'title' => $item->title,
                 'description' => $item->description,
@@ -50,17 +51,18 @@ class CategoryMigrate
                 'position' => $item->position
             ];
 
-            if($item->parent === 0){
+            if ($item->parent === 0) {
                 $add_to_request['parent'] = null;
-            }else{
+            } else {
                 //Достаем parent (id изменился)
-                if( !$add_to_request['parent'] = $migrateDBLog->getNewIdByOldId($item->parent, 'category')){
+                if (!$add_to_request['parent'] = $migrateDBLog->getNewIdByOldId($item->parent, 'category')) {
                     throw new MigrateRocketCategoryEmptyException('Category parent in '. $this->config->name .' not may be empty. '. json_encode($item));
                 }
             }
 
-            $request = $request->merge($add_to_request);
-            if($store = $this->store($request)){
+            $request->merge($add_to_request);
+
+            if ($store = $this->store($request)) {
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'category');
 

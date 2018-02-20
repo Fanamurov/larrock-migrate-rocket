@@ -23,6 +23,7 @@ class PagesMigrate
 
         $export_data = \DB::connection('migrate')->table('page')->get();
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'title' => $item->title,
                 'description' => $item->description,

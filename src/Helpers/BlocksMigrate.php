@@ -23,6 +23,7 @@ class BlocksMigrate
 
         $export_data = \DB::connection('migrate')->table('blocks')->get();
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'title' => $item->title,
                 'description' => $item->description,

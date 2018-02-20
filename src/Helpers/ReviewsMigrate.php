@@ -27,6 +27,7 @@ class ReviewsMigrate
 
         $export_data = \DB::connection('migrate')->table('opinions')->get();
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'name' => $item->username,
                 'contact' => $item->contact,

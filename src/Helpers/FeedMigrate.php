@@ -24,6 +24,7 @@ class FeedMigrate
 
         $export_data = \DB::connection('migrate')->table('feed')->get();
         foreach ($export_data as $item){
+            echo '.';
             $add_to_request = [
                 'title' => $item->title,
                 'short' => $item->short,
