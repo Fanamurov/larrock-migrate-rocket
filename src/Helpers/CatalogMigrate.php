@@ -4,6 +4,7 @@ namespace Larrock\ComponentMigrateRocket\Helpers;
 
 use Illuminate\Http\Request;
 use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
+use Larrock\ComponentMigrateRocket\Models\MigrateDB;
 use Larrock\Core\Models\Link;
 use Larrock\Core\Traits\AdminMethodsStore;
 
@@ -68,8 +69,6 @@ class CatalogMigrate
                 throw new MigrateRocketCategoryEmptyException('Category in '. $this->config->name .' not may be empty. '. json_encode($item));
             }
 
-            //kolvomono, vidarange, modifycostvidarange, modifycostkolvomono, soputka
-
             $request = $request->merge($add_to_request);
             if($store = $this->store($request)){
                 $this->importSerializedParamRow($store->id, $add_to_request);
@@ -109,11 +108,18 @@ class CatalogMigrate
                 }
             }
         }
+
+        $this->importSoputka($export_data);
     }
 
-    public function importCostParamRow($store_id, $data)
+    /**
+     * Импорт полей модификаций товаров влияющих на его цену
+     * @param $store_id
+     * @param $data
+     * @param array $paramsRow
+     */
+    public function importCostParamRow($store_id, $data, $paramsRow = ['kolvomono', 'vidarange'])
     {
-        $paramsRow = ['kolvomono', 'vidarange'];
         foreach ($paramsRow as $row){
             //$config_row = $this->config->rows[$row];
             $config_row = $this->config->rows['param'];
@@ -131,10 +137,7 @@ class CatalogMigrate
                                 $model_row->title = $explode[1];
                                 $model_row->save();
                                 $tag = $model_row;
-                                //echo 'SAVE ';
                             }
-
-                            //echo $tag->title;
 
                             //Создаем связь
                             $model = new Link();
@@ -148,12 +151,20 @@ class CatalogMigrate
                     }
                 }
             }
+            else{
+                \Log::error('Для товара '. $data['title'] .' не добавлен параметр '. $row .'. Ошибка десириализации');
+            }
         }
     }
 
-    public function importSerializedParamRow($store_id, $data)
+    /**
+     * Импорт параметров товаров из Tags, которые в импортируемой БД сериализованы
+     * @param $store_id
+     * @param $data
+     * @param array $paramsRow
+     */
+    public function importSerializedParamRow($store_id, $data, $paramsRow = ['povod', 'colors'])
     {
-        $paramsRow = ['povod', 'colors'];
         foreach ($paramsRow as $row){
             $config_row = $this->config->rows[$row];
             $model_row = new $config_row->modelChild;
@@ -167,10 +178,7 @@ class CatalogMigrate
                             $model_row->title = $value;
                             $model_row->save();
                             $tag = $model_row;
-                            //echo 'SAVE ';
                         }
-
-                        //echo $tag->title;
 
                         //Создаем связь
                         $model = new Link();
@@ -181,13 +189,20 @@ class CatalogMigrate
                         $model->save();
                     }
                 }
+            }else{
+                \Log::error('Для товара '. $data['title'] .' не добавлен параметр '. $row .'. Ошибка десириализации');
             }
         }
     }
 
-    public function importParamRow($store_id, $data)
+    /**
+     * Импорт параметров товаров из Tags
+     * @param $store_id
+     * @param $data
+     * @param array $paramsRow
+     */
+    public function importParamRow($store_id, $data, $paramsRow = ['delivery'])
     {
-        $paramsRow = ['delivery'];
         foreach ($paramsRow as $row){
             $config_row = $this->config->rows[$row];
             $model_row = new $config_row->modelChild;
@@ -199,10 +214,7 @@ class CatalogMigrate
                     $model_row->title = $value;
                     $model_row->save();
                     $tag = $model_row;
-                    //echo 'SAVE ';
                 }
-
-                //echo $tag->title;
 
                 //Создаем связь
                 $model = new Link();
@@ -211,6 +223,45 @@ class CatalogMigrate
                 $model->model_child = $config_row->modelChild;
                 $model->id_child = $tag->id;
                 $model->save();
+            }
+        }
+    }
+
+    /**
+     * Импорт связей товара к товарам (например: сопутка)
+     * @param $data_export
+     * @param array $paramsRow
+     */
+    public function importSoputka($data_export, $paramsRow = ['soputka'])
+    {
+        foreach ($data_export as $data){
+            echo 'S';
+            foreach ($paramsRow as $row){
+                if(@unserialize($data->{$row}) !== FALSE){
+                    $values = unserialize($data->{$row});
+                    foreach ($values as $value){
+                        //Значения - это артикулы товаров
+                        if( !empty($value)){
+                            //Проверяем наличие товара с таким артикулом в БД
+                            if($linked = \LarrockCatalog::getModel()->whereArticul($value)->first()){
+                                if($tovar = MigrateDB::whereOldId($data->id)->first()){
+                                    //Создаем связь
+                                    $model = new Link();
+                                    $model->id_parent = $tovar->new_id;
+                                    $model->model_parent = \LarrockCatalog::getModelName();
+                                    $model->model_child = \LarrockCatalog::getModelName();
+                                    $model->id_child = $linked->id;
+                                    $model->save();
+                                }
+                                else{
+                                    \Log::error('Для товара '. $data->id .' не прикреплены сопутствующие товары. Не найдено данных в MigrateDB');
+                                }
+                            }else{
+                                \Log::error('Товар с артикулом '. $value .' не найден в БД');
+                            }
+                        }
+                    }
+                }
             }
         }
     }
