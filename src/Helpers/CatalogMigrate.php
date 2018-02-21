@@ -36,7 +36,7 @@ class CatalogMigrate
                 'short' => $item->description,
                 'description' => $item->description_big,
                 'url' => $item->url,
-                'what' => $item->what,
+                'what' => 'руб./'. $item->what,
                 'cost' => $item->cost,
                 'cost_old' => $item->cost_old,
                 'manufacture' => $item->manufacture,

@@ -41,7 +41,8 @@ class MediaMigrate
         foreach ($export_data as $media){
             $src = base_path('export/'. $type_connect .'/big/'. $media->title);
             if(file_exists($src)){
-                $content->addMedia($src)->withCustomProperties([
+                echo 'I';
+                $content->addMedia($src)->preservingOriginal()->withCustomProperties([
                     'alt' => 'photo', 'gallery' => $media->param
                 ])->toMediaCollection('images');
             }else{
@@ -60,7 +61,8 @@ class MediaMigrate
         foreach ($export_data as $media){
             $src = base_path('export/'. $type_connect .'/big/'. $media->title);
             if(file_exists($src)){
-                $content->addMedia($src)->withCustomProperties([
+                echo 'F';
+                $content->addMedia($src)->preservingOriginal()->withCustomProperties([
                     'alt' => 'file', 'gallery' => $media->param
                 ])->toMediaCollection('files');
             }else{
