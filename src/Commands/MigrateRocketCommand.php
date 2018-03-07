@@ -63,7 +63,7 @@ class MigrateRocketCommand extends Command
         $this->info('Start migrate process');
 
         $packages = [
-            'UsersMigrate', 'CategoryMigrate', 'BlocksMigrate', 'CatalogMigrate', 'FeedMigrate',
+            'UsersMigrate', 'CategoryMigrate', 'BlocksMigrate', 'CatalogMigrate', 'CatalogMigrateLinks', 'FeedMigrate',
             'MenuMigrate', 'PagesMigrate', 'ReviewsMigrate', 'all'
         ];
 
@@ -76,6 +76,8 @@ class MigrateRocketCommand extends Command
         }elseif($name === 'BlocksMigrate' || $name === 'all'){
             $process_list[] = new BlocksMigrate();
         }elseif($name === 'CatalogMigrate' || $name === 'all'){
+            $process_list[] = new CatalogMigrate();
+        }elseif($name === 'CatalogMigrateLinks' || $name === 'all'){
             $process_list[] = new CatalogMigrate();
         }elseif($name === 'FeedMigrate' || $name === 'all'){
             $process_list[] = new FeedMigrate();
@@ -93,9 +95,9 @@ class MigrateRocketCommand extends Command
         }
 
         foreach ($process_list as $process){
-            $this->info('Process '. get_class($process) .' started');
+            $this->info('Process '. \get_class($process) .' started');
             $process->import();
-            $this->info('Process '. get_class($process) .' successful imported');
+            $this->info('Process '. \get_class($process) .' successful imported');
         }
 
         $this->info('Process migrate ended');

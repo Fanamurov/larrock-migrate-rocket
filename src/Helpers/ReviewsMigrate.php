@@ -49,7 +49,7 @@ class ReviewsMigrate
             if($item->connect_type === 'cart'){
                 $add_to_request['link_name'] = $item->connect_type;
                 //Достаем link_id (id изменился)
-                $add_to_request['user_id'] = $migrateDBLog->getNewIdByOldId($item->cartid, 'cart');
+                $add_to_request['link_id'] = $migrateDBLog->getNewIdByOldId($item->cartid, 'cart');
             }
 
             if($item->connect_type === 'main'){

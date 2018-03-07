@@ -4,7 +4,6 @@ namespace Larrock\ComponentMigrateRocket\Helpers;
 
 use Illuminate\Http\Request;
 use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
-use Larrock\ComponentMigrateRocket\Models\MigrateDB;
 use Larrock\Core\Models\Link;
 use Larrock\Core\Traits\AdminMethodsStore;
 
@@ -108,8 +107,6 @@ class CatalogMigrate
                 }
             }
         }
-
-        $this->importSoputka($export_data);
     }
 
     /**
@@ -223,45 +220,6 @@ class CatalogMigrate
                 $model->model_child = $config_row->modelChild;
                 $model->id_child = $tag->id;
                 $model->save();
-            }
-        }
-    }
-
-    /**
-     * Импорт связей товара к товарам (например: сопутка)
-     * @param $data_export
-     * @param array $paramsRow
-     */
-    public function importSoputka($data_export, $paramsRow = ['soputka'])
-    {
-        foreach ($data_export as $data){
-            echo 'S';
-            foreach ($paramsRow as $row){
-                if(@unserialize($data->{$row}) !== FALSE){
-                    $values = unserialize($data->{$row});
-                    foreach ($values as $value){
-                        //Значения - это артикулы товаров
-                        if( !empty($value)){
-                            //Проверяем наличие товара с таким артикулом в БД
-                            if($linked = \LarrockCatalog::getModel()->whereArticul($value)->first()){
-                                if($tovar = MigrateDB::whereOldId($data->id)->first()){
-                                    //Создаем связь
-                                    $model = new Link();
-                                    $model->id_parent = $tovar->new_id;
-                                    $model->model_parent = \LarrockCatalog::getModelName();
-                                    $model->model_child = \LarrockCatalog::getModelName();
-                                    $model->id_child = $linked->id;
-                                    $model->save();
-                                }
-                                else{
-                                    \Log::error('Для товара '. $data->id .' не прикреплены сопутствующие товары. Не найдено данных в MigrateDB');
-                                }
-                            }else{
-                                \Log::error('Товар с артикулом '. $value .' не найден в БД');
-                            }
-                        }
-                    }
-                }
             }
         }
     }
