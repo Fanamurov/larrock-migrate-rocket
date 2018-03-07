@@ -42,7 +42,7 @@ class CatalogMigrateLinks
                         if( !empty($value)){
                             //Проверяем наличие товара с таким артикулом в БД
                             if($linked = \LarrockCatalog::getModel()->whereArticul($value)->first()){
-                                if($tovar = MigrateDB::whereOldId($data->id)->first()){
+                                if($tovar = MigrateDB::whereOldId($data->id)->whereTableName('catalog')->first()){
                                     //Создаем связь
                                     $model = new Link();
                                     $model->id_parent = $tovar->new_id;
