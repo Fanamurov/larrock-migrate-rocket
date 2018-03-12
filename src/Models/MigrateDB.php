@@ -4,6 +4,13 @@ namespace Larrock\ComponentMigrateRocket\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $old_id
+ * @property \Carbon\Carbon $created_at
+ * @property int $id
+ * @property \Carbon\Carbon $updated_at
+ * @property int $new_id
+ */
 class MigrateDB extends Model
 {
     public $table = 'migrate_db';

@@ -7,7 +7,7 @@ use Larrock\Core\Helpers\FormBuilder\FormInput;
 use Larrock\Core\Helpers\FormBuilder\FormSelectKey;
 use Larrock\Core\Helpers\FormBuilder\FormTextarea;
 use Larrock\Core\Models\Seo;
-use Larrock\ComponentAdminSeo\Facades\LarrockSeo;
+use LarrockAdminSeo;
 
 class MigrateRocketComponent extends Component
 {
@@ -57,9 +57,10 @@ class MigrateRocketComponent extends Component
 
     public function renderAdminMenu()
     {
-        $count = \Cache::remember('count-data-admin-'. LarrockSeo::getName(), 1440, function(){
-            return LarrockSeo::getModel()->count(['id']);
+        $count = \Cache::rememberForever('count-data-admin-'. LarrockAdminSeo::getName(), function(){
+            return LarrockAdminSeo::getModel()->count(['id']);
         });
-        return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => LarrockSeo::getConfig(), 'url' => '/admin/'. LarrockSeo::getName()]);
+        return view('larrock::admin.sectionmenu.types.default', ['count' => $count, 'app' => LarrockAdminSeo::getConfig(),
+            'url' => '/admin/'. LarrockAdminSeo::getName()]);
     }
 }

@@ -8,7 +8,6 @@ use Larrock\ComponentMigrateRocket\Helpers\CartMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CategoryMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\FeedMigrate;
-use Larrock\ComponentMigrateRocket\Helpers\MediaMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MenuMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MigrateDBLog;
 use Larrock\ComponentMigrateRocket\Helpers\PagesMigrate;
