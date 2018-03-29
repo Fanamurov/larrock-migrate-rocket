@@ -15,6 +15,9 @@ class FeedMigrate
         $this->allow_redirect = NULL;
     }
 
+    /**
+     * @throws MigrateRocketCategoryEmptyException
+     */
     public function import()
     {
         $request = new Request();

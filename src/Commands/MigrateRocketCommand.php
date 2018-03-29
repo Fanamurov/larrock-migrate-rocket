@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Larrock\ComponentMigrateRocket\Helpers\BlocksMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CartMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrateLinks;
 use Larrock\ComponentMigrateRocket\Helpers\CategoryMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\FeedMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MenuMigrate;
@@ -85,7 +86,7 @@ class MigrateRocketCommand extends Command
         }elseif($name === 'CatalogMigrate' || $name === 'all'){
             $process_list[] = new CatalogMigrate();
         }elseif($name === 'CatalogMigrateLinks' || $name === 'all'){
-            $process_list[] = new CatalogMigrate();
+            $process_list[] = new CatalogMigrateLinks();
         }elseif($name === 'CartMigrate' || $name === 'all'){
             $process_list[] = new CartMigrate();
         }elseif($name === 'FeedMigrate' || $name === 'all'){
