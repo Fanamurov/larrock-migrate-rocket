@@ -3,8 +3,8 @@
 namespace Larrock\ComponentMigrateRocket\Helpers;
 
 use Illuminate\Http\Request;
-use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
 use Larrock\Core\Traits\AdminMethodsStore;
+use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
 
 class CategoryMigrate
 {
@@ -12,7 +12,7 @@ class CategoryMigrate
 
     public function __construct()
     {
-        $this->allow_redirect = NULL;
+        $this->allow_redirect = null;
     }
 
     /**
@@ -22,7 +22,7 @@ class CategoryMigrate
     {
         $this->config = \LarrockCategory::getConfig();
 
-        for($i=0; $i < 4; $i++){
+        for ($i = 0; $i < 4; $i++) {
             $export_data = \DB::connection('migrate')->table('category')->where('level', '=', $i)->get();
             $this->importLevel($export_data);
         }
@@ -37,7 +37,7 @@ class CategoryMigrate
         $request = new Request();
         $migrateDBLog = new MigrateDBLog();
 
-        foreach ($export_data as $item){
+        foreach ($export_data as $item) {
             echo '.';
             $add_to_request = [
                 'title' => $item->title,
@@ -48,15 +48,15 @@ class CategoryMigrate
                 'active' => $item->active,
                 'sitemap' => 1,
                 'rss' => 1,
-                'position' => $item->position
+                'position' => $item->position,
             ];
 
             if ($item->parent === 0) {
                 $add_to_request['parent'] = null;
             } else {
                 //Достаем parent (id изменился)
-                if (!$add_to_request['parent'] = $migrateDBLog->getNewIdByOldId($item->parent, 'category')) {
-                    throw new MigrateRocketCategoryEmptyException('Category parent in '. $this->config->name .' not may be empty. '. json_encode($item));
+                if (! $add_to_request['parent'] = $migrateDBLog->getNewIdByOldId($item->parent, 'category')) {
+                    throw new MigrateRocketCategoryEmptyException('Category parent in '.$this->config->name.' not may be empty. '.json_encode($item));
                 }
             }
 

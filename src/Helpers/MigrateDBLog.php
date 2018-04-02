@@ -12,15 +12,17 @@ class MigrateDBLog
         $migrateDB->old_id = $itemId;
         $migrateDB->new_id = $storeId;
         $migrateDB->table_name = $table;
+
         return $migrateDB->save();
     }
 
     public function getNewIdByOldId($oldId, $table)
     {
-        if($data = MigrateDB::whereTableName($table)->whereOldId($oldId)->first()){
+        if ($data = MigrateDB::whereTableName($table)->whereOldId($oldId)->first()) {
             return $data->new_id;
         }
-        return Null;
+
+        return null;
     }
 
     public function clearByTable($table)

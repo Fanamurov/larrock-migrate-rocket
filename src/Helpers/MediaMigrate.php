@@ -2,15 +2,13 @@
 
 namespace Larrock\ComponentMigrateRocket\Helpers;
 
-use Illuminate\Http\Request;
 use Larrock\Core\Traits\AdminMethodsStore;
 
 /**
  * Линкование фото и файлов к материалам
- * Используется как вспомогательный метод к методам импорта контента
+ * Используется как вспомогательный метод к методам импорта контента.
  *
  * Class MediaMigrate
- * @package Larrock\ComponentMigrateRocket\Helpers
  */
 class MediaMigrate
 {
@@ -18,7 +16,7 @@ class MediaMigrate
 
     public function __construct()
     {
-        $this->allow_redirect = NULL;
+        $this->allow_redirect = null;
     }
 
     /**
@@ -38,18 +36,19 @@ class MediaMigrate
             ->where('type_connect', '=', $type_connect)
             ->where('id_connect', '=', $id_connect)->get();
 
-        foreach ($export_data as $media){
-            $src = base_path('export/'. $type_connect .'/big/'. $media->title);
-            if(file_exists($src)){
+        foreach ($export_data as $media) {
+            $src = base_path('export/'.$type_connect.'/big/'.$media->title);
+            if (file_exists($src)) {
                 echo 'I';
                 $content->addMedia($src)->preservingOriginal()->withCustomProperties([
-                    'alt' => 'photo', 'gallery' => $media->param
+                    'alt' => 'photo', 'gallery' => $media->param,
                 ])->toMediaCollection('images');
-            }else{
-                \Log::error('Файла '. $src .' не обнаружено');
+            } else {
+                \Log::error('Файла '.$src.' не обнаружено');
             }
         }
-        return TRUE;
+
+        return true;
     }
 
     public function attachFiles($content, $id_connect, $type_connect)
@@ -58,17 +57,18 @@ class MediaMigrate
             ->where('type_connect', '=', $type_connect)
             ->where('id_connect', '=', $id_connect)->get();
 
-        foreach ($export_data as $media){
-            $src = base_path('export/'. $type_connect .'/big/'. $media->title);
-            if(file_exists($src)){
+        foreach ($export_data as $media) {
+            $src = base_path('export/'.$type_connect.'/big/'.$media->title);
+            if (file_exists($src)) {
                 echo 'F';
                 $content->addMedia($src)->preservingOriginal()->withCustomProperties([
-                    'alt' => 'file', 'gallery' => $media->param
+                    'alt' => 'file', 'gallery' => $media->param,
                 ])->toMediaCollection('files');
-            }else{
-                \Log::error('Файла '. $src .' не обнаружено');
+            } else {
+                \Log::error('Файла '.$src.' не обнаружено');
             }
         }
-        return TRUE;
+
+        return true;
     }
 }
