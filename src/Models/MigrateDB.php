@@ -19,6 +19,6 @@ class MigrateDB extends Model
 
     protected $casts = [
         'old_id' => 'integer',
-        'new_id' => 'integer'
+        'new_id' => 'integer',
     ];
 }

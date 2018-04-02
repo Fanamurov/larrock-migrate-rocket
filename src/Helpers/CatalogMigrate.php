@@ -3,9 +3,9 @@
 namespace Larrock\ComponentMigrateRocket\Helpers;
 
 use Illuminate\Http\Request;
-use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
 use Larrock\Core\Models\Link;
 use Larrock\Core\Traits\AdminMethodsStore;
+use Larrock\ComponentMigrateRocket\Exceptions\MigrateRocketCategoryEmptyException;
 
 class CatalogMigrate
 {
@@ -13,7 +13,7 @@ class CatalogMigrate
 
     public function __construct()
     {
-        $this->allow_redirect = NULL;
+        $this->allow_redirect = null;
     }
 
     /**
@@ -28,14 +28,14 @@ class CatalogMigrate
         $this->config = \LarrockCatalog::getConfig();
 
         $export_data = \DB::connection('migrate')->table('catalog')->get();
-        foreach ($export_data as $item){
+        foreach ($export_data as $item) {
             echo '.';
             $add_to_request = [
                 'title' => $item->title,
                 'short' => $item->description,
                 'description' => $item->description_big,
                 'url' => $item->url,
-                'what' => 'руб./'. $item->what,
+                'what' => 'руб./'.$item->what,
                 'cost' => $item->cost,
                 'cost_old' => $item->cost_old,
                 'manufacture' => $item->manufacture,
@@ -64,12 +64,12 @@ class CatalogMigrate
 
             $add_to_request['category'] = $migrateDBLog->getNewIdByOldId($item->category, 'category');
 
-            if( !$add_to_request['category']){
-                throw new MigrateRocketCategoryEmptyException('Category in '. $this->config->name .' not may be empty. '. json_encode($item));
+            if (! $add_to_request['category']) {
+                throw new MigrateRocketCategoryEmptyException('Category in '.$this->config->name.' not may be empty. '.json_encode($item));
             }
 
             $request = $request->merge($add_to_request);
-            if($store = $this->store($request)){
+            if ($store = $this->store($request)) {
                 $this->importSerializedParamRow($store->id, $add_to_request);
                 $this->importParamRow($store->id, $add_to_request);
                 $this->importCostParamRow($store->id, $add_to_request);
@@ -80,27 +80,27 @@ class CatalogMigrate
                 //Есть группы товаров. Бывает так, что медиа навешаны на не импортируемый товар из group (импортирован первый)
                 $item_media_id = null;
                 $get_group = \DB::connection('migrate')->table('catalog')->where('group', '=', $item->group)->get();
-                foreach ($get_group as $group_item){
-                    if($export_data = \DB::connection('migrate')->table('images')
+                foreach ($get_group as $group_item) {
+                    if ($export_data = \DB::connection('migrate')->table('images')
                         ->where('type_connect', '=', 'catalog')
-                        ->where('id_connect', '=', $group_item->id)->first()){
-                        if(isset($export_data->id_connect)){
+                        ->where('id_connect', '=', $group_item->id)->first()) {
+                        if (isset($export_data->id_connect)) {
                             $item_media_id = $export_data->id_connect;
                         }
                     }
                 }
 
-                if( !$item_media_id){
-                    if($export_data = \DB::connection('migrate')->table('files')
+                if (! $item_media_id) {
+                    if ($export_data = \DB::connection('migrate')->table('files')
                         ->where('type_connect', '=', 'catalog')
-                        ->where('id_connect', '=', $group_item->id)->first()){
-                        if(isset($export_data->id_connect)){
+                        ->where('id_connect', '=', $group_item->id)->first()) {
+                        if (isset($export_data->id_connect)) {
                             $item_media_id = $export_data->id_connect;
                         }
                     }
                 }
 
-                if($item_media_id){
+                if ($item_media_id) {
                     //Добавляем медиа
                     $MediaMigrate = new MediaMigrate();
                     $MediaMigrate->attach($store, $item_media_id, 'catalog');
@@ -110,26 +110,26 @@ class CatalogMigrate
     }
 
     /**
-     * Импорт полей модификаций товаров влияющих на его цену
+     * Импорт полей модификаций товаров влияющих на его цену.
      * @param $store_id
      * @param $data
      * @param array $paramsRow
      */
     public function importCostParamRow($store_id, $data, $paramsRow = ['kolvomono', 'vidarange'])
     {
-        foreach ($paramsRow as $row){
+        foreach ($paramsRow as $row) {
             //$config_row = $this->config->rows[$row];
             $config_row = $this->config->rows['param'];
             $model_row = new $config_row->modelChild;
-            if(@unserialize($data[$row]) !== FALSE){
+            if (@unserialize($data[$row]) !== false) {
                 $values = unserialize($data[$row]);
-                if($values && is_array($values)){
-                    foreach ($values as $value){
+                if ($values && is_array($values)) {
+                    foreach ($values as $value) {
                         //kolvomono/Стандартно/700
                         $explode = explode('/', $value);
-                        if(array_key_exists(2, $explode)){
+                        if (array_key_exists(2, $explode)) {
                             //Проверяем наличие тэга в БД
-                            if( !$tag = $model_row->whereTitle($explode[1])->first()){
+                            if (! $tag = $model_row->whereTitle($explode[1])->first()) {
                                 $model_row = new $config_row->modelChild;
                                 $model_row->title = $explode[1];
                                 $model_row->save();
@@ -147,30 +147,29 @@ class CatalogMigrate
                         }
                     }
                 }
-            }
-            else{
-                \Log::error('Для товара '. $data['title'] .' не добавлен параметр '. $row .'. Ошибка десириализации');
+            } else {
+                \Log::error('Для товара '.$data['title'].' не добавлен параметр '.$row.'. Ошибка десириализации');
             }
         }
     }
 
     /**
-     * Импорт параметров товаров из Tags, которые в импортируемой БД сериализованы
+     * Импорт параметров товаров из Tags, которые в импортируемой БД сериализованы.
      * @param $store_id
      * @param $data
      * @param array $paramsRow
      */
     public function importSerializedParamRow($store_id, $data, $paramsRow = ['povod', 'colors'])
     {
-        foreach ($paramsRow as $row){
+        foreach ($paramsRow as $row) {
             $config_row = $this->config->rows[$row];
             $model_row = new $config_row->modelChild;
-            if(@unserialize($data[$row]) !== FALSE){
+            if (@unserialize($data[$row]) !== false) {
                 $values = unserialize($data[$row]);
-                foreach ($values as $value){
-                    if( !empty($value)){
+                foreach ($values as $value) {
+                    if (! empty($value)) {
                         //Проверяем наличие тэга в БД
-                        if( !$tag = $model_row->whereTitle($value)->first()){
+                        if (! $tag = $model_row->whereTitle($value)->first()) {
                             $model_row = new $config_row->modelChild;
                             $model_row->title = $value;
                             $model_row->save();
@@ -186,27 +185,27 @@ class CatalogMigrate
                         $model->save();
                     }
                 }
-            }else{
-                \Log::error('Для товара '. $data['title'] .' не добавлен параметр '. $row .'. Ошибка десириализации');
+            } else {
+                \Log::error('Для товара '.$data['title'].' не добавлен параметр '.$row.'. Ошибка десириализации');
             }
         }
     }
 
     /**
-     * Импорт параметров товаров из Tags
+     * Импорт параметров товаров из Tags.
      * @param $store_id
      * @param $data
      * @param array $paramsRow
      */
     public function importParamRow($store_id, $data, $paramsRow = ['delivery'])
     {
-        foreach ($paramsRow as $row){
+        foreach ($paramsRow as $row) {
             $config_row = $this->config->rows[$row];
             $model_row = new $config_row->modelChild;
             $value = $data[$row];
-            if( !empty($value)){
+            if (! empty($value)) {
                 //Проверяем наличие тэга в БД
-                if( !$tag = $model_row->whereTitle($value)->first()){
+                if (! $tag = $model_row->whereTitle($value)->first()) {
                     $model_row = new $config_row->modelChild;
                     $model_row->title = $value;
                     $model_row->save();

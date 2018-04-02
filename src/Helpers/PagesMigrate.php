@@ -11,7 +11,7 @@ class PagesMigrate
 
     public function __construct()
     {
-        $this->allow_redirect = NULL;
+        $this->allow_redirect = null;
     }
 
     public function import()
@@ -22,7 +22,7 @@ class PagesMigrate
         $this->config = \LarrockPages::getConfig();
 
         $export_data = \DB::connection('migrate')->table('page')->get();
-        foreach ($export_data as $item){
+        foreach ($export_data as $item) {
             echo '.';
             $add_to_request = [
                 'title' => $item->title,
@@ -30,11 +30,11 @@ class PagesMigrate
                 'date' => $item->date,
                 'url' => $item->url,
                 'active' => $item->active,
-                'position' => $item->position
+                'position' => $item->position,
             ];
 
             $request = $request->merge($add_to_request);
-            if($store = $this->store($request)){
+            if ($store = $this->store($request)) {
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'page');
 

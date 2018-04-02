@@ -11,7 +11,7 @@ class MenuMigrate
 
     public function __construct()
     {
-        $this->allow_redirect = NULL;
+        $this->allow_redirect = null;
     }
 
     public function import()
@@ -22,26 +22,26 @@ class MenuMigrate
         $this->config = \LarrockMenu::getConfig();
 
         $export_data = \DB::connection('migrate')->table('menu')->get();
-        foreach ($export_data as $item){
+        foreach ($export_data as $item) {
             $add_to_request = [
                 'title' => $item->title,
                 'type' => $item->type,
                 'parent' => $item->parent,
                 'url' => $item->url,
                 'active' => $item->active,
-                'position' => $item->position
+                'position' => $item->position,
             ];
 
-            if(empty($item->type)){
+            if (empty($item->type)) {
                 $add_to_request['type'] = 'default';
             }
 
-            if((integer)$item->parent === 0){
-                $add_to_request['parent'] = NULL;
+            if ((int) $item->parent === 0) {
+                $add_to_request['parent'] = null;
             }
 
             $request = $request->merge($add_to_request);
-            if($store = $this->store($request)){
+            if ($store = $this->store($request)) {
                 //Ведем лог изменений id
                 $migrateDBLog->log($item->id, $store->id, 'menu');
 

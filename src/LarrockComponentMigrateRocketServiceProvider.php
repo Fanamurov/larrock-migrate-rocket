@@ -26,7 +26,7 @@ class LarrockComponentMigrateRocketServiceProvider extends ServiceProvider
     {
         $this->app->bind('command.migrateRocket:import', MigrateRocketCommand::class);
         $this->commands([
-            'command.migrateRocket:import'
+            'command.migrateRocket:import',
         ]);
     }
 }

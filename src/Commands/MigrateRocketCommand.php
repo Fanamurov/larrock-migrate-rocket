@@ -3,17 +3,17 @@
 namespace Larrock\ComponentMigrateRocket\Commands;
 
 use Illuminate\Console\Command;
-use Larrock\ComponentMigrateRocket\Helpers\BlocksMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\CartMigrate;
-use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrate;
-use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrateLinks;
-use Larrock\ComponentMigrateRocket\Helpers\CategoryMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\FeedMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MenuMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\MigrateDBLog;
 use Larrock\ComponentMigrateRocket\Helpers\PagesMigrate;
-use Larrock\ComponentMigrateRocket\Helpers\ReviewsMigrate;
 use Larrock\ComponentMigrateRocket\Helpers\UsersMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\BlocksMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\ReviewsMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\CategoryMigrate;
+use Larrock\ComponentMigrateRocket\Helpers\CatalogMigrateLinks;
 
 class MigrateRocketCommand extends Command
 {
@@ -40,18 +40,18 @@ class MigrateRocketCommand extends Command
         $clearDBLog = $this->option('clearDBLog');
         $silence = $this->option('silence');
         $options = [];
-        if($silence > 0){
+        if ($silence > 0) {
             $options['--silence'] = $silence;
         }
         $options['--process'] = $process;
         $options['--clearDBLog'] = $clearDBLog;
 
-        if($silence > 0){
+        if ($silence > 0) {
             $this->process($options);
-        }else{
+        } else {
             if ($this->confirm('Start Migrate?', 'yes')) {
-                if(empty($options['--clearDBLog'])){
-                    if($this->confirm('Clear MigrateDB?')) {
+                if (empty($options['--clearDBLog'])) {
+                    if ($this->confirm('Clear MigrateDB?')) {
                         $options['--clearDBLOG'] = true;
                     }
                 }
@@ -64,12 +64,12 @@ class MigrateRocketCommand extends Command
     {
         $this->info('Start migrate process');
 
-        if( !empty($options['--process'])){
+        if (! empty($options['--process'])) {
             $name = $options['--process'];
-        }else{
+        } else {
             $packages = [
                 'UsersMigrate', 'CategoryMigrate', 'BlocksMigrate', 'CatalogMigrate', 'CatalogMigrateLinks', 'CartMigrate',
-                'FeedMigrate', 'MenuMigrate', 'PagesMigrate', 'ReviewsMigrate', 'all'
+                'FeedMigrate', 'MenuMigrate', 'PagesMigrate', 'ReviewsMigrate', 'all',
             ];
 
             $name = $this->choice('What to migrate?', $packages);
@@ -77,37 +77,38 @@ class MigrateRocketCommand extends Command
 
         $this->clearDBLog($name, $options);
 
-        if($name === 'UsersMigrate' || $name === 'all'){
+        if ($name === 'UsersMigrate' || $name === 'all') {
             $process_list[] = new UsersMigrate();
-        }elseif($name === 'CategoryMigrate' || $name === 'all'){
+        } elseif ($name === 'CategoryMigrate' || $name === 'all') {
             $process_list[] = new CategoryMigrate();
-        }elseif($name === 'BlocksMigrate' || $name === 'all'){
+        } elseif ($name === 'BlocksMigrate' || $name === 'all') {
             $process_list[] = new BlocksMigrate();
-        }elseif($name === 'CatalogMigrate' || $name === 'all'){
+        } elseif ($name === 'CatalogMigrate' || $name === 'all') {
             $process_list[] = new CatalogMigrate();
-        }elseif($name === 'CatalogMigrateLinks' || $name === 'all'){
+        } elseif ($name === 'CatalogMigrateLinks' || $name === 'all') {
             $process_list[] = new CatalogMigrateLinks();
-        }elseif($name === 'CartMigrate' || $name === 'all'){
+        } elseif ($name === 'CartMigrate' || $name === 'all') {
             $process_list[] = new CartMigrate();
-        }elseif($name === 'FeedMigrate' || $name === 'all'){
+        } elseif ($name === 'FeedMigrate' || $name === 'all') {
             $process_list[] = new FeedMigrate();
-        }elseif($name === 'MenuMigrate' || $name === 'all'){
+        } elseif ($name === 'MenuMigrate' || $name === 'all') {
             $process_list[] = new MenuMigrate();
-        }elseif($name === 'PagesMigrate' || $name === 'all'){
+        } elseif ($name === 'PagesMigrate' || $name === 'all') {
             $process_list[] = new PagesMigrate();
-        }elseif($name === 'ReviewsMigrate' || $name === 'all'){
+        } elseif ($name === 'ReviewsMigrate' || $name === 'all') {
             $process_list[] = new ReviewsMigrate();
         }
 
-        if( !isset($process_list)){
+        if (! isset($process_list)) {
             $this->error('Не выбран конкретный процесс');
-            return TRUE;
+
+            return true;
         }
 
-        foreach ($process_list as $process){
-            $this->info('Process '. \get_class($process) .' started');
+        foreach ($process_list as $process) {
+            $this->info('Process '.\get_class($process).' started');
             $process->import();
-            $this->info('Process '. \get_class($process) .' successful imported');
+            $this->info('Process '.\get_class($process).' successful imported');
         }
 
         $this->info('Process migrate ended');
@@ -118,34 +119,34 @@ class MigrateRocketCommand extends Command
     {
         $MigrateDBLog = new MigrateDBLog();
 
-        if($name === 'all' && !empty($options['--clearDBLog'])){
+        if ($name === 'all' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearAll();
         }
-        if($name === 'UsersMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'UsersMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('users');
         }
-        if($name === 'CategoryMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'CategoryMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('category');
         }
-        if($name === 'BlocksMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'BlocksMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('blocks');
         }
-        if($name === 'CatalogMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'CatalogMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('catalog');
         }
-        if($name === 'CartMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'CartMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('cart');
         }
-        if($name === 'FeedMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'FeedMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('feed');
         }
-        if($name === 'MenuMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'MenuMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('menu');
         }
-        if($name === 'PagesMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'PagesMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('page');
         }
-        if($name === 'ReviewsMigrate' && !empty($options['--clearDBLog'])){
+        if ($name === 'ReviewsMigrate' && ! empty($options['--clearDBLog'])) {
             $MigrateDBLog->clearByTable('reviews');
         }
     }

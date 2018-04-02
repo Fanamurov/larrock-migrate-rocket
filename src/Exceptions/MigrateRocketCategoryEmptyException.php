@@ -17,6 +17,7 @@ class MigrateRocketCategoryEmptyException extends Exception
     public static function withMessage($message)
     {
         \Log::error($message);
+
         return new static($message);
     }
 }
